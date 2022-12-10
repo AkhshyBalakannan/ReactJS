@@ -372,7 +372,31 @@ useEffect Hook Dependencies
 
     export default Home;
 
+useEffect Hook Clean-up
+    Basic Concept is useEffect should only run functions when that particular component is being shown
+        or being rendered in browser. For example, we will be using useEffect for useFetch custom component
+        
+        which will take some time to process those request from backend and if user clicks on another routes
+        before this fetch request is completed it will throw an error 
+            warning: can't perform a React state update on an unmounted component...
+    
+    So we will be introducing new Controller function named AbortController() and cleanup functions
+        cleanup function is something which useEffect already has inbuilt, 
+        For this cleanup function to work we just have to return a function at the end of useEffect func
 
+    import { useEffect } from 'react';
+
+    useEffect(() => {
+        // AbortController function
+        const abortCont = new AbortController();
+
+        setTimeout(() => {
+            console.log('fire after 1 sec')
+        }, 1000);
+
+        // cleanup function
+        return () => abortCont.abort();
+    }, [])
 
 JSON Server 
 
@@ -575,8 +599,336 @@ Creating Custom Hook:
     
     export default useFetch;
 
+-------------------------------------------------------------------------------
+
+The below code will show the actual placement of those clean up and abortController func in real time
+
+    import { useState, useEffect } from 'react';
+
+    const useFetch = (url) => {
+        const [data, setData] = useState(null);
+        const [isPending, setIsPending] = useState(true);
+        const [error, setError] = useState(null);
+
+        useEffect(() => {
+            const abortCont = new AbortController();
+
+            setTimeout(() => {
+            fetch(url, { signal: abortCont.signal })
+            .then(res => {
+                if (!res.ok) { // error coming back from server
+                throw Error('could not fetch the data for that resource');
+                } 
+                return res.json();
+            })
+            .then(data => {
+                setIsPending(false);
+                setData(data);
+                setError(null);
+            })
+            .catch(err => {
+                if (err.name === 'AbortError') {
+                console.log('fetch aborted')
+                } else {
+                // auto catches network / connection error
+                setIsPending(false);
+                setError(err.message);
+                }
+            })
+            }, 1000);
+
+            // Code Cleanup // abort the fetch
+            return () => abortCont.abort();
+        }, [url])
+
+        return { data, isPending, error };
+    }
+    
+    export default useFetch;
 
 
+----------------------------------------------------------------------------------
 
+React Router
+
+    Basic concepts here is to create routes for react completely based on react-router-dom@5
+
+    Main players here are BrowserRouter as Router, Route, Switch
+        Where Router is the entire parent div which will take care of all route's
+        Even now we can't make it working because we need need one more main component that is 
+        switch which will take care of redirecting routes to each components
+
+    The below code shows the structure of components, where you can see that <Home /> component is
+        placed inside <Route path="/">--Component Name--</Route>
+
+
+    One More main thing is why we use switch, here it serves very important purpose we can even use
+        route component without switch, But we shouldn't be doing that because 
+        
+        Switch component is the one which will take care of rendering only one component at a time,
+        For example what react does is it will come here to Router and check the paths for match 
+            If we don't have switch what react does is it won't stop when it finds the match it tries
+                to render other matching paths such as "/" and "/home" will be matched because both 
+                routes have "/" in the starting
+
+        Here, even if we use switch we have a problem where we won't be able to reach "/home" as for the 
+            same reason mentioned above
+
+        For this we need to have exact attribute in route to match the exact same
+
+    import Navbar from './Navbar';
+    import Home from './Home';
+    import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+    function App() {
+    return (
+        <Router>
+            <div className="App">
+                <Navbar />
+                <div className="content">
+                    <Switch>
+                        <Route exact path="/">
+                            <Home />
+                        </Route>
+                        <Route path="/create">
+                            <Create />
+                        </Route>
+                    </Switch>
+                </div>
+            </div>
+        </Router>
+    );
+    }
+
+    export default App;
+
+Router Links:
+    Concept here is to create <a> tag which should not send request to server
+    React should intecept the request and take control when user clicks on any links for redirecting
+
+    We should use <Link> tag instead of <a>, Anyhow in browser it would be rendered as <a>
+        here the link tag is also from react-router-dom library
+
+
+    import { Link } from "react-router-dom";
+
+    const Navbar = () => {
+    return (
+        <nav className="navbar">
+            <h1>The Dojo Blog</h1>
+            <div className="links">
+                <Link to="/">Home</Link>
+                <Link to="/create" style={{color: 'white', backgroundColor: '#f1356d' }}>
+                    New Blog
+                </Link>
+            </div>
+        </nav>
+    );
+    }
+    
+    export default Navbar;
+
+
+Route Parameters
+    Basic concept here is to have access to the url values such as id from url
+    To do this we simply have to use the :id in path, which will be added inside router comp
+
+    <Route path="/blogs/:id">
+        <BlogDetails />
+    </Route>
+
+    we also need few steps that has to be done for the route-component to be access Parameters
+
+    import { useParams } from "react-router-dom";
+
+    const BlogDetails = () => {
+        const { id } = useParams();
+
+        return (
+            <div className="blog-details">
+            <h2>Blog details - { id }</h2>
+            </div>
+        );
+    }
+
+    export default BlogDetails;
+
+----------------------------------------------------------------------
+
+    import { Link } from 'react-router-dom';
+
+    const BlogList = ({ blogs }) => {
+        return (
+            <div className="blog-list">
+            {blogs.map(blog => (
+                <div className="blog-preview" key={blog.id} >
+                <Link to={`/blogs/${blog.id}`}>
+                    <h2>{ blog.title }</h2>
+                    <p>Written by { blog.author }</p>
+                </Link>
+                </div>
+            ))}
+            </div>
+        );
+    }
+    
+    export default BlogList;
+
+
+Controlled Inputs
+    Basic concept here is key-binds, we need to know what user has entered in input field,
+        also have to update the value each time user types or clicks on that input or select fields
+
+    To add we do it by using value attribute of input, and we need some function to update the value
+        as we already know only the useState variables be updated only with set functions
+        we will be using onChange function and use the e attr e.target values 
+            onChange={(e) => setTitle(e.target.value)}
+
+
+    import { useState } from "react";
+
+    const Create = () => {
+        const [title, setTitle] = useState('');
+        const [body, setBody] = useState('');
+        const [author, setAuthor] = useState('mario');
+
+        return (
+            <div className="create">
+            <h2>Add a New Blog</h2>
+            <form>
+                <label>Blog title:</label>
+                <input 
+                    type="text" 
+                    required 
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    />
+                <label>Blog body:</label>
+                <textarea
+                    required
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    ></textarea>
+                <label>Blog author:</label>
+                <select
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                >
+                    <option value="mario">mario</option>
+                    <option value="yoshi">yoshi</option>
+                </select>
+                <button>Add Blog</button>
+            </form>
+            </div>
+        );
+    }
+    
+    export default Create;
+
+Submit Event 
+    we have to submit or sent the user entered data to backend for which we need onSubmit functions
+        to do this we will use the onSubmit default attr of form element, we will call handleSubmit
+        function inside this onSubmit attr which will be auto triggered when user submits the form
+        we have access to e and we should first stop the default behaviour of refreshing the page, we
+        do this using e.preventDefault() function and now we can do things we wanted with the data 
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const data = { name };
+    }
+
+    <form onSubmit={handleSubmit}>
+        <label>Name:</label>
+        <input 
+            type="text" 
+            required 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+        />
+        <button>Submit</button>
+    </form>
+
+    Mostly we would be sent this data to backend for saving in our DB, So lets do that using fetch request
+
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            const data = { name };
+
+            fetch('http://localhost:8000/users/', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                console.log('new data added');
+            })
+        }
+
+
+Programmatic Redirects
+
+    Basic concept here is redirect users inside our website without explicitly 
+    asking users to click on any links, for example when user submits data we need to redirect them to home page
+
+    To do this we will be using useHistory feature that the react-router-dom library 
+
+    import { useHistory } from 'react-router-dom';
+    import { useEffect } from 'react';
+
+    const Create = () => {
+        const history = useHistory();
+
+        useEffect(() => {
+            setTimeout(() => {
+                // history.go(); -1 to go backward one time 
+                // history.go(); 1 to go forward one time 
+
+                history.go(-1);
+
+                // we also have push method to redirect new components are some other routes
+
+                history.push("/"); // which will redirect the url to home page
+
+            }, 1000);
+        }, []);
+    }
+
+    export default Create;
+
+
+Delete using Fetch 
+    Basic concept is fetch request to make delete request, the below code sample shows handleDelete function
+
+    import { useHistory } from "react-router-dom";
+
+    const DetailPage = ({ id }) => {
+        const history = useHistory();
+
+        const handleClick = () => {
+            fetch('http://localhost:8000/data/' + id, {method: 'DELETE'})
+            .then(() => {
+                history.push('/');
+            })
+        }
+
+        return (
+            <div className="blog-details">
+                <button onClick={handleClick}></button>
+            </div>
+        );
+    }
+    
+    export default BlogDetails;
+
+
+Not Found page
+    Basic Concept is to catch all 404 urls inside our site to show notFound components
+        To do this we simply have to match entire routes what ever maybe given in urls 
+        We also should be more careful in placing this 404-route because it will be matched with 
+            any sort of url patterns, So this 404-route should be only placed at the last 
+
+    <Route path="*">
+        <NotFound />
+    </Route>
 
 
