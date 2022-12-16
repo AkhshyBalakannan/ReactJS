@@ -1,0 +1,86 @@
+Persisting Redux State to Local Storage
+
+    Basic concept here is there are instances when we need to persist data to the browser’s 
+        local storage. A good example of this is a one-off notification like a cookie notice. 
+        You want the browser to remember if the user has agreed to the cookie policy and 
+        not to show the notification again.
+
+
+First, we’ll create a new module with load state and save state functions.
+
+1. Write the function that loads the state from localStorage
+    // localStorage.js
+    export const loadState = () => {
+        try {
+            const serializedState = localStorage.getItem('state');
+            if (serializedState === null) {
+            return undefined;
+            }
+            return JSON.parse(serializedState);
+        } catch (err) {
+            return undefined;
+        }
+    }; 
+
+    loadState will look at the browser’s localStorage. 
+    If there is a serialized string of the state, it will parse it as JSON.
+    It’s important that this piece of code is wrapped in a try/catch block 
+        because calls to localStorage.getItem can fail if the user privacy mode 
+        does not allow the use of localStorage.
+
+    If something goes wrong, we will return undefined so that the app doesn’t crash.
+
+2. Write the function that saves the state to localStorage
+    // localStorage.js
+    export const saveState = (state) => {
+        try {
+            const serializedState = JSON.stringify(state);
+            localStorage.setItem('state', serializedState);
+        } catch {
+            // ignore write errors
+        }
+    };
+    In this function, the state is serialized into a string by using JSON.stringify. 
+        This will only work if the state is serializable. 
+        Having a serializable state is a general recommendation in Redux.
+
+    We will then use the return value of loadState as the second argument to create store 
+        so that it overrides the initial state specified by the reducers.
+
+3. Subscribe to the store
+    // store.js
+    const persistedState = loadState();
+    const store = createStore(
+        app,
+        persistedState
+    );
+    store.subscribe(() => {
+        saveState({
+            todos: store.getState().todos
+        });
+    });
+    The saveState function is called inside the store.subscribe listener 
+        so it is called every time the storage state changes. 
+        However, it should not be called too often 
+        because it uses the expensive JSON.stringify operation.
+
+    To solve this, we will use a library called lodash 
+        which includes a handy utility called throttle. 
+        Wrapping the callback in a throttle ensures 
+        that the inner function that is passed in 
+        is not going to be called more often than the number of milliseconds that is specified. 
+        Now, even if this store gets called really fast, 
+        we have a guarantee that we will only write to the localStorage at most once a second.
+
+    Throttle: invokes a function at most once per every X milliseconds.
+
+    // store.js
+    import throttle from 'lodash.throttle';
+    ...
+    store.subscribe(throttle(() => {
+        saveState({
+            todos: store.getState().todos
+        });
+    }, 1000));
+    
+    The persisted state will now be available for your component to use.
