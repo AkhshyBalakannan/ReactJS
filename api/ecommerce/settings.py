@@ -43,7 +43,8 @@ INSTALLED_APPS = [
 
     'order.apps.OrderConfig',
     'product.apps.ProductConfig',
-    'user.apps.UserConfig'
+    'user.apps.UserConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,10 @@ REST_FRAMEWORK = {
     # ]
 }
 
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
