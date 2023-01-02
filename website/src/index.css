@@ -5,9 +5,71 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #434242;
+  min-height: 100vh;
+  color: white;
+}
+
+a {
+  color: #61dafb;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #F3EFE0;
+  color: #222222;
+}
+
+.navbar > .links > a,.navbar > .links > span > a {
+  margin: 0px 10px;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 8px;
+  padding-left: 16px;
+  width: 20%;
+}
+
+.list-product {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.product-card {
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: 0.25rem;
+  padding: 1rem 1rem;
+  width: 20rem;
+  color: black;
+  max-width: 200px;
+  margin: 10px;
+}
+
+.product-card > h3 {
+  text-align: center;
+}
+
+.avail {
+  color: green;
+}
+
+.not-avail {
+  color: red;
 }
