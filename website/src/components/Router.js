@@ -1,6 +1,9 @@
 import Home from './pages/Home';
 import NotFound from './common/NotFound';
 import ProductDetail from './pages/ProductDetail'
+import MyCart from './pages/MyCart'
+import WishList from './pages/WishList'
+import MyOrder from './pages/MyOrder'
 import SignIn from './auth/SignIn'
 import SignUp from './auth/SignUp'
 import Profile from './pages/Profile'
@@ -19,6 +22,9 @@ const Router = () => {
         SIGN_UP,
         PROFILE,
         PRODUCT,
+        MY_CART,
+        WISH_LIST,
+        MY_ORDER,
         LOG_OUT,
         NOT_FOUND
     } = routerLinks
@@ -31,6 +37,9 @@ const Router = () => {
                 <Route path={SIGN_UP} element={<SignUp />} />
                 <Route path={PROFILE} element={<Profile />} />
                 <Route path={PRODUCT}  element={<ProductDetail />} />
+                <Route path={MY_CART}  element={<MyCart />} />
+                <Route path={WISH_LIST}  element={<WishList />} />
+                <Route path={MY_ORDER}  element={<MyOrder />} />
                 <Route path={LOG_OUT}  element={<LogOut />} />
                 <Route path={NOT_FOUND}  element={<NotFound />} />
             </Route>

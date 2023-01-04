@@ -5,6 +5,9 @@ const routerLinks = {
     PROFILE: 'profile',
     PRODUCT: 'product/:id',
     LOG_OUT: 'logout',
+    MY_CART: 'my-cart',
+    WISH_LIST: 'wish-list',
+    MY_ORDER: 'my-order',
     NOT_FOUND: '*'
 }
 

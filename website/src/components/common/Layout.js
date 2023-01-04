@@ -1,5 +1,8 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar";
+import { Outlet } from "react-router-dom"
+import Navbar from "./Navbar"
+import ClearCache from "../../utils/ClearCache"
+import Modal from '../modals/Modal'
+
 
 const Layout = () => {
   return (
@@ -8,6 +11,8 @@ const Layout = () => {
         <div className="content">
         <Outlet />
         </div>
+        <ClearCache />
+        <Modal />
     </div>
   )
 };

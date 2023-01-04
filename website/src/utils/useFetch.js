@@ -7,15 +7,9 @@ const useFetch = (url) => {
 
   useEffect(() => {
     const abortCont = new AbortController();
-
+    const headers = {"Accept":"application/json, text/plain, /","Content-Type": "multipart/form-data"}
     setTimeout(() => {
-      fetch(url, { signal: abortCont.signal, 
-        headers: {
-        'Content-Type': 'application/json',
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-        'Access-Control-Allow-Origin': true
-        }, 
-      })
+      fetch(url,headers)
       .then(res => {
         if (!res.ok) { // error coming back from server
           throw Error('could not fetch the data for that resource');

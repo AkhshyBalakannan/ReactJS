@@ -1,19 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import throttle from 'lodash.throttle';
-import counterReducer from '../store/userSlice';
+import productSlice from '../redux/productSlice';
 import { loadState, saveState } from './localStorage'
 
 const preloadedState = loadState();
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    products: productSlice
   },
   preloadedState
 });
 
 store.subscribe(throttle(() => {
   saveState({
-    counter: store.getState().counter
+    products: store.getState().products
   });
 }, 500));
