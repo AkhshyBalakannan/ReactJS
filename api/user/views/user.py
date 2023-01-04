@@ -12,7 +12,8 @@ from user.middleware.user import is_authenticated
 @is_authenticated
 def loggedUser(request):
     serializer = CustomUserSerializer(request.user, many=False)
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)
 
 @api_view(['GET', 'POST'])
 def userEntry(request):
@@ -23,7 +24,8 @@ def userEntry(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     serializer = CustomUserSerializer()
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)
 
 
 @api_view(['GET', 'POST'])
@@ -34,10 +36,12 @@ def userUpdate(request, pk):
         serializer = CustomUserSerializer(instance=user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response = {'data': serializer.data}
+            return Response(response)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     serializer = CustomUserSerializer(user)
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)
 
 @api_view(['POST'])
 def resetPassword(request, pk):
@@ -55,5 +59,6 @@ def passwordUpdate(request, pk):
     serializer = ChangePasswordSerializer(instance=user, data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

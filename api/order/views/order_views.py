@@ -19,13 +19,15 @@ def order_list(request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response = {'data': serializer.data}
+            return Response(response)
         return Response(serializer.errors, 400)
     # return JsonResponse(serializer.errors, status=400)
 
 
     serializer = OrderSerializer(Order.objects.all(), many=True)
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def order_detail(request, pk):
@@ -39,13 +41,15 @@ def order_detail(request, pk):
 
     if request.method == 'GET':
         serializer = OrderSerializer(order)
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
 
     elif request.method == 'PUT':
         serializer = OrderSerializer(order, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response = {'data': serializer.data}
+            return Response(response)
         return Response(serializer.errors, 400)
 
     elif request.method == 'DELETE':
@@ -58,4 +62,5 @@ def user_order_list(request):
     List all Order, or create a new Order.
     """
     serializer = OrderSerializer(Order.objects.filter(user_id=request.user.id), many=True)
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)

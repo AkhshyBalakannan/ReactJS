@@ -20,12 +20,14 @@ def purchase(request):
     """
     if request.method == 'GET':
         serializer = OrderItemSerializer(OrderItem.objects.all(), many=True)
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
     data = request.data
     serializer = OrderItemSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
     return Response(serializer.errors)
 
 
@@ -39,7 +41,8 @@ def purchase(request):
     serializer = OrderItemSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
     return Response(serializer.errors)
 
 

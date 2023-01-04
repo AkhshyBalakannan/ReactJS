@@ -13,10 +13,12 @@ def product_list(request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response = {'data': serializer.data}
+            return Response(response)
         return Response(serializer.errors)
     serializer = ProductSerializer(Product.objects.all(), many=True)
-    return Response(serializer.data)
+    response = {'data': serializer.data}
+    return Response(response)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -31,15 +33,18 @@ def product_detail(request, pk):
 
     if request.method == 'GET':
         serializer = ProductSerializer(product)
-        return Response(serializer.data)
+        response = {'data': serializer.data}
+        return Response(response)
 
     elif request.method == 'PUT':
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response = {'data': serializer.data}
+            return Response(response)
         return Response(serializer.errors, 400)
 
     elif request.method == 'DELETE':
         product.delete()
-        return Response('Product Deleted Successfully', 204)
+        response = {'data': 'Product Deleted Successfully'}
+        return Response(response, 204)
