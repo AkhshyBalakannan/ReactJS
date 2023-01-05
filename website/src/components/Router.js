@@ -9,7 +9,7 @@ import SignUp from './auth/SignUp'
 import Profile from './pages/Profile'
 import Layout from './common/Layout';
 import routerLinks from '../data/routerLinks'
-import LogOut from './auth/LogOut';
+import PrivateRoute from './auth/PrivateRoute'
 
 import { Routes, Route } from "react-router-dom";
 
@@ -25,7 +25,6 @@ const Router = () => {
         MY_CART,
         WISH_LIST,
         MY_ORDER,
-        LOG_OUT,
         NOT_FOUND
     } = routerLinks
 
@@ -35,12 +34,15 @@ const Router = () => {
                 <Route index element={<Home />} />
                 <Route path={SIGN_IN} element={<SignIn />} />
                 <Route path={SIGN_UP} element={<SignUp />} />
-                <Route path={PROFILE} element={<Profile />} />
+                <Route path={PROFILE} element={
+                        <PrivateRoute children={<Profile />} />
+                    } />
                 <Route path={PRODUCT}  element={<ProductDetail />} />
                 <Route path={MY_CART}  element={<MyCart />} />
                 <Route path={WISH_LIST}  element={<WishList />} />
-                <Route path={MY_ORDER}  element={<MyOrder />} />
-                <Route path={LOG_OUT}  element={<LogOut />} />
+                <Route path={MY_ORDER} element={
+                        <PrivateRoute children={<MyOrder />} />
+                    } />
                 <Route path={NOT_FOUND}  element={<NotFound />} />
             </Route>
         </Routes>

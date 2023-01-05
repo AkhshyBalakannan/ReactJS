@@ -166,3 +166,77 @@ table {
   font-weight: 900;
   font-size: 16px;
 }
+
+.modal-container {
+  display: none;
+}
+
+.auth-container {
+  border: 1px solid white;
+  border-radius: 8px;
+  width: 600px;
+  margin: auto;
+  padding: 30px 80px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 42px;
+}
+
+.auth-container > form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container > form > label {
+  font-size: 32px;
+  text-transform: uppercase;
+  padding: 20px 0px;
+}
+
+.auth-container > form > input {
+  font-size: 24px;
+  padding: 4px 16px;
+  border: 0px 1px 0px 0px;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid;
+  border-color: white;
+  color: white;
+}
+
+.auth-container > h2 {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 40px;
+}
+
+.auth-container > p {
+  text-align: center;
+  padding-top: 32px;
+  font-size: 24px;
+}
+
+.auth-container, .signup > form > label {
+  font-size: 24px;
+}
+
+.auth-container, .signup > form > input {
+  font-size: 20px;
+}
+
+.auth-container > .error-message {
+  text-align: center;
+  color: red;
+}
+
+.auth-cta {
+  margin-top: 32px;
+  border: 1px solid orange;
+  background-color: orange;
+  padding: 12px;
+  color: white;
+  font-size: 32px;
+  border-radius: 12px;
+  font-weight: 900;
+}

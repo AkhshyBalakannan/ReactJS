@@ -1,7 +1,7 @@
 import Card from '../common/Card'
 import { products, fetchAllProductAsync } from '../../redux/productSlice'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 const ProductList = () => {
@@ -24,7 +24,7 @@ const ProductList = () => {
     let pageLoading = requestStatus === 'loading'
 
     return (
-        <> 
+        <>
             { pageLoading && <p>Loading...</p> }
             {
                 !pageLoading && 

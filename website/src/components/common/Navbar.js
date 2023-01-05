@@ -3,6 +3,10 @@ import routerLinks from "../../data/routerLinks";
 import cart from '../../assets/icons/cart.svg'
 import heart from '../../assets/icons/bookmark-heart.svg'
 import projectName from '../../data/project'
+import { user, logOutUser } from '../../redux/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+
+
 
 const Navbar = () => {
 
@@ -13,8 +17,7 @@ const Navbar = () => {
         PROFILE,
         MY_CART,
         WISH_LIST,
-        MY_ORDER,
-        LOG_OUT
+        MY_ORDER
     } = routerLinks
 
     const style = { 
@@ -33,16 +36,22 @@ const Navbar = () => {
         fontWeight: 600
     }
 
-    const authUser = false
+    const logoutStyle = {
+        ...style,
+        cursor: 'pointer'
+    }
+    const users = useSelector(user)
+    const dispatch = useDispatch()
+
     let wishListAlt = 'Wish List Icon'
     let myCartAlt = 'My Cart Icon'
 
     let authRouterLink = (
-        authUser ? (
+        users.userAuth ? (
             <>
                 <Link to={PROFILE} style={style}>Profile</Link>
                 <Link to={MY_ORDER} style={style}>My Orders</Link>
-                <Link to={LOG_OUT} style={style}>Log Out</Link>
+                <span onClick={() => dispatch(logOutUser(users))} style={logoutStyle}>Log Out</span>
             </>
         ) : (
             <>
